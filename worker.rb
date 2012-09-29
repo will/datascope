@@ -1,9 +1,9 @@
-require 'sequel'
-DB = Sequel.connect ENV['TARGET_DB']
+require './lib/stat_collector'
 
 loop do
-  puts 'work'
-
+  puts StatCollector.capture_stats!
+  StatCollector.reset_target_stats!
   $stdout.flush
   sleep(ENV['PEROID']  ? ENV['PEROID'].to_i : 10)
 end
+
