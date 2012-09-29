@@ -14,7 +14,8 @@ class Datascope < Sinatra::Application
     (0..120).map do |t|
       {
         time: time + t*60,
-        connections: {count: (12*t/160).to_i}
+        connections: (12*t/160).to_i,
+        cache_hit: 0.98
       }
     end.to_json
   end
@@ -22,7 +23,8 @@ class Datascope < Sinatra::Application
   get '/stats.json' do
     {
       time: Time.now,
-      connections: {count: count}
+      connections: count,
+      cache_hit: cache_hit
     }.to_json
   end
 
@@ -32,6 +34,9 @@ class Datascope < Sinatra::Application
   end
 
   def cache_hit
-    DB
+    f = DB[:pg_statio_user_tables].select("(sum(heap_blks_hit) - sum(heap_blks_read)) / sum(heap_blks_hit) as ratio".lit).first[:ratio].to_f
+    p f
+    f
   end
+
 end

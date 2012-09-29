@@ -11,7 +11,6 @@ ensureHistory = (callback) ->
   else
     callback()
 
-
 update = ->
   getStats (d) ->
     console.log(d)
@@ -21,8 +20,8 @@ update = ->
     setTimeout(update, 10000)
 
 render = (data) ->
-  $('#connections .count').text(data.connections.count)
-  window.last = data.connections.count
+  $('#connections .count').text(data.connections)
+  window.last = data.connections
 
 dateRangeScale = (list, start, stop, size) ->
   ranged = _.select( list, (it) -> it.time >= start && it.time <= stop )
@@ -32,10 +31,10 @@ dateRangeScale = (list, start, stop, size) ->
   d3.range(0,size).map( (i) -> ranged[Math.floor( i*origSize/size )] )
 
 context = cubism.context()
-    .step(1e4)
-    .size(800)
+    .step(1e3)
+    .size(960)
 
-getThing = ->
+getThing = (name, selector) ->
   context.metric( (start,stop,step,callback)->
     ensureHistory ->
       astart = +start
@@ -43,20 +42,14 @@ getThing = ->
       size = (astop-astart)/step
 
       data = dateRangeScale(history,start,stop,size)
-      console.log(size,start,stop)
-      console.log('history', history.length)
-      console.log('data.length', data.length)
-      console.log('data', data)
 
-      values = _.map(data, (it) -> it?.connections?.count)
-      console.log('values', values)
+      values = _.map(data, (it) -> it?[selector])
+      console.log(selector, 'values', values)
       callback(null, values)
-  , 'conn count')
+  , name)
 
 $ ->
-  window.last = 4
   update()
-
 
   d3.select("body").selectAll(".axis")
       .data(["top", "bottom"])
@@ -69,7 +62,10 @@ $ ->
       .call(context.rule())
 
   d3.select("body").selectAll(".horizon")
-      .data(d3.range(1, 2).map(getThing))
+      .data([
+        getThing('conn count', 'connections'),
+        getThing('cache hit', 'cache_hit')
+       ])
       .enter().insert("div", ".bottom")
       .attr("class", "horizon")
       .call(context.horizon()) #.extent([0, 15]))
