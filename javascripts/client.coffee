@@ -9,7 +9,7 @@ getThing = (name, selector) ->
       return callback(new Error('could not load data')) unless data
       callback(null, data)
 
-  , selector)
+  , name)
 
 $ ->
   d3.select("body").selectAll(".axis")
@@ -24,8 +24,14 @@ $ ->
 
   d3.select("body").selectAll(".horizon")
       .data([
-        getThing('conn count', 'connections'),
-        getThing('cache hit', 'cache_hit')
+        getThing('conn count'     , 'connections') ,
+        getThing('cache hit'      , 'cache_hit')   ,
+        getThing('SELECT (count)' , 'select')      ,
+        getThing('SELECT (ms)'    , 'select_ms')   ,
+        getThing('UPDATE (count)' , 'update')      ,
+        getThing('UPDATE (ms)'    , 'update_ms')   ,
+        getThing('INSERT (count)' , 'insert')      ,
+        getThing('INSERT (ms)'    , 'insert_ms')   ,
        ])
       .enter().insert("div", ".bottom")
       .attr("class", "horizon")
