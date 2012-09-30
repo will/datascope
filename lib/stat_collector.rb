@@ -11,6 +11,7 @@ module StatCollector
       connections: connections,
       stat_statements: stat_statements,
       cache_hit: cache_hit,
+      locks: locks
     }
   end
 
@@ -44,5 +45,9 @@ module StatCollector
       .select("(sum(heap_blks_hit) - sum(heap_blks_read)) / sum(heap_blks_hit) as ratio".lit)
       .first[:ratio]
       .to_f
+  end
+
+  def locks
+    target_db[:pg_locks].exclude(:granted).count
   end
 end

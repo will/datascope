@@ -32,6 +32,7 @@ $ ->
         getThing('UPDATE (ms)'    , 'update_ms')   ,
         getThing('INSERT (count)' , 'insert')      ,
         getThing('INSERT (ms)'    , 'insert_ms')   ,
+        getThing('locks'          , 'locks')       ,
        ])
       .enter().insert("div", ".bottom")
       .attr("class", "horizon")
