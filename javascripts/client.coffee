@@ -1,56 +1,17 @@
-getStats = (callback) -> $.getJSON('/stats.json', callback)
-
-history = []
-
-ensureHistory = (callback) ->
-  if history.length == 0
-    $.getJSON '/history.json', (d) ->
-      history = d
-      _.each history, (it) -> it.time = Date.parse(it.time)
-      callback()
-  else
-    callback()
-
-update = ->
-  getStats (d) ->
-    console.log(d)
-    d.time = Date.parse(d.time)
-    history.push d
-    render(d)
-    setTimeout(update, 10000)
-
-render = (data) ->
-  $('#connections .count').text(data.connections)
-  window.last = data.connections
-
-dateRangeScale = (list, start, stop, size) ->
-  ranged = _.select( list, (it) -> it.time >= start && it.time <= stop )
-  #console.log('overall list', list)
-  #console.log('ranged', ranged)
-  origSize = ranged.length
-  d3.range(0,size).map( (i) -> ranged[Math.floor( i*origSize/size )] )
-
 context = cubism.context()
-    .step(1e3)
+    .step(1e4)
     .size(960)
 
 getThing = (name, selector) ->
   context.metric( (start,stop,step,callback)->
-    ensureHistory ->
-      astart = +start
-      astop = +stop
-      size = (astop-astart)/step
+    url = "/metric?selector=#{selector}&start=#{start}&stop=#{stop}&step=#{step}"
+    d3.json url, (data) ->
+      return callback(new Error('could not load data')) unless data
+      callback(null, data)
 
-      data = dateRangeScale(history,start,stop,size)
-
-      values = _.map(data, (it) -> it?[selector])
-      console.log(selector, 'values', values)
-      callback(null, values)
-  , name)
+  , selector)
 
 $ ->
-  update()
-
   d3.select("body").selectAll(".axis")
       .data(["top", "bottom"])
       .enter().append("div")
