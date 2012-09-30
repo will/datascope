@@ -43,17 +43,17 @@ class Datascope < Sinatra::Application
   end
 
   def values_by_regex(parsed, regex, ms=false)
-    stat_statements = parsed.map{|row| row['stat_statements'].find{|h| h['query'] =~ regex }}
-    values = stat_statements.map do |h|
-      if h
-        if ms
-          h['total_time'].to_f/h['calls'].to_f
-        else
-          h['calls']
-        end
-      else
-        0
-      end
+    vals = parsed.map { |row|
+      row['stat_statements']
+        .select  {|h| h['query'] =~ regex }
+        .sort_by {|h| h['total_time']}
+        .inject([0,0]) { |m,h| [m.first + h['calls'].to_i, m.last + h['total_time'].to_f ] }
+    }
+
+    if ms
+      vals.map {|pair| pair.first.zero? ? 0 : pair.last/pair.first}
+    else
+      vals.map(&:first)
     end
   end
 

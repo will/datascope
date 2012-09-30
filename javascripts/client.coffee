@@ -36,7 +36,7 @@ $ ->
        ])
       .enter().insert("div", ".bottom")
       .attr("class", "horizon")
-      .call(context.horizon()) #.extent([0, 15]))
+      .call(context.horizon().height(60)) #.extent([0, 15]))
 
   context.on("focus", (i) ->
     d3.selectAll(".value").style("right", i == null ? null : context.size() - i + "px")
