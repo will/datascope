@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sequel'
 require 'json'
+require 'haml'
 DB = Sequel.connect ENV['DATABASE_URL']
 
 class Datascope < Sinatra::Application
