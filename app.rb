@@ -18,9 +18,7 @@ class Datascope < Sinatra::Application
     parsed = results.map{|row| JSON.parse(row[:data])}
 
     if selector == 'query_1'
-      query = "SELECT * FROM \"aws_instances\" WHERE (\"id\" = ?) LIMIT ?"
-      stat_statements = parsed.map{|row| row['stat_statements'].find{|h| h['query'] == query }}
-      values = stat_statements.map{|h| h ? h['total_time'].to_f/h['calls'].to_f : 0}
+      values = values_by_regex parsed, /with packed/i, :ms
     elsif selector == 'select'
       values = values_by_regex parsed, /select/i
     elsif selector == 'select_ms'

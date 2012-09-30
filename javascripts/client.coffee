@@ -33,6 +33,7 @@ $ ->
         getThing('INSERT (count)' , 'insert')      ,
         getThing('INSERT (ms)'    , 'insert_ms')   ,
         getThing('locks'          , 'locks')       ,
+        getThing('voodoo query (ms)', 'query_1')   ,
        ])
       .enter().insert("div", ".bottom")
       .attr("class", "horizon")
