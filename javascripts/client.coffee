@@ -11,18 +11,25 @@ getThing = (name, selector) ->
 
   , name)
 
+
+
+$.getJSON('/queries', (data) ->
+  console.log(data)
+  $ -> _.each(data, (it) -> $('#queries').append("<li><em>#{it.calls}c, #{it.total_time}ms</em> #{it.query}</li>"))
+)
+
 $ ->
-  d3.select("body").selectAll(".axis")
+  d3.select("#cubism").selectAll(".axis")
       .data(["top", "bottom"])
       .enter().append("div")
       .attr("class", (d)-> return d + " axis" )
       .each((d) -> d3.select(this).call(context.axis().ticks(12).orient(d)))
 
-  d3.select("body").append("div")
+  d3.select("#cubism").append("div")
       .attr("class", "rule")
       .call(context.rule())
 
-  d3.select("body").selectAll(".horizon")
+  d3.select("#cubism").selectAll(".horizon")
       .data([
         getThing('conn count'     , 'connections') ,
         getThing('cache hit'      , 'cache_hit')   ,

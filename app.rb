@@ -41,6 +41,14 @@ class Datascope < Sinatra::Application
     JSON.dump values
   end
 
+  get '/queries' do
+    data = JSON.parse DB[:stats]
+                        .select(:data)
+                        .order_by(:id.desc)
+                        .first[:data]
+    JSON.dump data['stat_statements'].map{|s| s['query'] = s['query'][0..50]; s}.sort{|s| s['total_time']}.reverse
+  end
+
   def values_by_regex(parsed, regex, ms=false)
     vals = parsed.map { |row|
       row['stat_statements']
