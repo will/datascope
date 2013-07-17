@@ -30,3 +30,11 @@ CREATE EXTENSION
 $ git push heroku master
 $ heroku scale worker=1
 ```
+
+# Basic Auth
+
+If you don't want your deployment of datascope to be publicly visible, simply add environment variables for `BASIC_AUTH_USER` and `BASIC_AUTH_PASSWORD`.
+
+```
+heroku config:add BASIC_AUTH_USER=admin BASIC_AUTH_PASSWORD=password
+```

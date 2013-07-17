@@ -5,6 +5,13 @@ require 'haml'
 DB = Sequel.connect ENV['DATABASE_URL']
 
 class Datascope < Sinatra::Application
+
+  if (ENV['BASIC_AUTH_USER'] && ENV['BASIC_AUTH_PASSWORD'])
+    use Rack::Auth::Basic, "Datascope" do |username, password|
+      username == ENV['BASIC_AUTH_USER'] && password == ENV['BASIC_AUTH_PASSWORD']
+    end
+  end
+
   get '/' do
     haml :index
   end
